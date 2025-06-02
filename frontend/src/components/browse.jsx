@@ -64,7 +64,7 @@ const Browse = () => {
         {/* Upload Form */}
         <div className=" bg-black p-6 rounded-3xl  shadow-md space-y-4 p-14">
           <h1 className="text-xl font-bold text-center text-white ">
-            Upload Attendance ZIP
+            Upload OMR ZIP FILE
           </h1>
 
           <div className="flex flex-col space-y-2 text-white">
