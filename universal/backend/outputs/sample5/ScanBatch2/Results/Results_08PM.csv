@@ -1,0 +1,2 @@
+"file_id","input_path","output_path","score","Roll","q1","q2","q3","q4","q5","q6","q7","q8","q9","q10","q11","q12","q13","q14","q15","q16","q17","q18","q19","q20","q21","q22"
+"camscanner-2.jpg","inputs\sample5\ScanBatch2\camscanner-2.jpg","outputs\sample5\ScanBatch2\CheckedOMRs\camscanner-2.jpg","55.0","E204420109","C","C","B","C","C","01","19","10","10","18","D","A","D","D","D","C","C","C","C","D","B","A"
