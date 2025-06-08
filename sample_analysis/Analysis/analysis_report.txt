@@ -1,0 +1,18 @@
+OMR ANALYSIS REPORT
+==================================================
+
+OVERALL STATISTICS:
+Total Questions: 40
+Correct Answers: 7
+Incorrect Answers: 33
+Accuracy: 17.50%
+Final Score: 15.25
+
+ANSWER DISTRIBUTION:
+Option A: 9 (22.5%)
+Option B: 17 (42.5%)
+Option C: 9 (22.5%)
+Option D: 5 (12.5%)
+
+QUESTION-BY-QUESTION ANALYSIS:
+--------------------------------------------------

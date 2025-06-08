@@ -1,0 +1,91 @@
+{
+  "bubbleDimensions": [15, 15],
+  "pageDimensions": [800, 800],
+  "fieldBlocks": {
+    "USN_Last_3_Digits": {
+      "fieldType": "QTYPE_INT",
+      "fieldLabels": ["usn8", "usn9", "usn10"],
+      "origin": [193, 153],
+      "labelsGap": 20,
+      "bubblesGap": 23,
+      "direction": "vertical"
+    },
+    "MCQ_Block_Col1_Q1_Q10": {
+      "fieldType": "QTYPE_MCQ4",
+      "fieldLabels": [
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8",
+        "q9",
+        "q10"
+      ],
+      "origin": [317, 420],
+      "labelsGap": 30,
+      "bubblesGap": 15,
+      "direction": "vertical"
+    },
+
+    "MCQ_Block_Col2_Q10_Q20": {
+      "fieldType": "QTYPE_MCQ4",
+      "fieldLabels": [
+        "q11",
+        "q12",
+        "q13",
+        "q14",
+        "q15",
+        "q16",
+        "q17",
+        "q18",
+        "q19",
+        "q20"
+      ],
+      "origin": [410, 420],
+      "labelsGap": 30,
+      "bubblesGap": 15,
+      "direction": "vertical"
+    },
+    "MCQ_Block_Col3_Q20_Q30": {
+      "fieldType": "QTYPE_MCQ4",
+      "fieldLabels": [
+        "q21",
+        "q22",
+        "q23",
+        "q24",
+        "q25",
+        "q26",
+        "q27",
+        "q28",
+        "q29",
+        "q30"
+      ],
+      "origin": [500, 420],
+      "labelsGap": 30,
+      "bubblesGap": 15,
+      "direction": "vertical"
+    },
+    "MCQ_Block_Col4_Q30_Q40": {
+      "fieldType": "QTYPE_MCQ4",
+      "fieldLabels": [
+        "q31",
+        "q32",
+        "q33",
+        "q34",
+        "q35",
+        "q36",
+        "q37",
+        "q38",
+        "q39",
+        "q40"
+      ],
+      "origin": [600, 420],
+      "labelsGap": 30,
+      "bubblesGap": 15,
+      "direction": "vertical"
+    }
+  }
+}
