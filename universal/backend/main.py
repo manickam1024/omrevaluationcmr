@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 from src.entry import entry_point
 from src.logger import logger
-from src.analysis import OMRAnalyzer
 
 def parse_args():
     argparser = argparse.ArgumentParser()
@@ -62,6 +61,24 @@ def parse_args():
     
     return args
 
+def run_analysis(output_dir: str, results_data: list = None):
+    """Run analysis on OMR results"""
+    try:
+        from analyze_omr import analyze_results
+        
+        if results_data:
+            # Use provided results data
+            analyze_results(results_data, output_dir)
+        else:
+            # Try to find and analyze CSV files
+            from analyze_omr import analyze_from_csv_files
+            analyze_from_csv_files(output_dir)
+            
+    except ImportError:
+        print("Analysis module not found. Please ensure analyze_omr.py is in the same directory.")
+    except Exception as e:
+        print(f"Error running analysis: {e}")
+
 def entry_point_for_args(args):
     if args["debug"] is True:
         sys.tracebacklimit = 0
@@ -70,14 +87,23 @@ def entry_point_for_args(args):
     all_results = []
     
     for root in args["input_paths"]:
+        # Get results from entry_point
         results = entry_point(Path(root), args)
         if results:
             all_results.extend(results)
     
     # Run analysis if requested
-    if args.get("analyze", False) and all_results:
-        analyzer = OMRAnalyzer(args["output_dir"])
-        analyzer.analyze_results(all_results)
+    if args.get("analyze", False):
+        print("\n" + "="*50)
+        print("STARTING DETAILED ANALYSIS...")
+        print("="*50)
+        
+        if all_results:
+            # Use the results from processing
+            run_analysis(args["output_dir"], all_results)
+        else:
+            # Fallback to CSV analysis
+            run_analysis(args["output_dir"])
 
 if __name__ == "__main__":
     args = parse_args()

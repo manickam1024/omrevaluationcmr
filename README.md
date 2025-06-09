@@ -48,6 +48,7 @@ Analyze results after OMR evaluation:
 python main.py -i inputs/samplecmr -o outputs > omr_output.txt
 
 # Then analyze
+python analyze_omr.py --sample
 python analyze_omr.py --output_dir outputs/samplecmr --console_output_file omr_output.txt
 ```
 
