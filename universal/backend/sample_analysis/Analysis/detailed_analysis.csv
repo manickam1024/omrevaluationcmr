@@ -1,0 +1,9 @@
+question,marked_answer,correct_answer,verdict,delta,cumulative_score,is_correct
+q1,A,B,Incorrect,0.25,0.25,False
+q2,C,D,Incorrect,0.25,0.5,False
+q3,B,C,Incorrect,0.25,0.75,False
+q4,A,B,Incorrect,0.25,1.0,False
+q5,A,D,Incorrect,0.25,1.25,False
+q11,C,C,Correct,1.0,3.5,True
+q14,D,D,Correct,1.0,5.0,True
+q15,B,B,Correct,1.0,6.0,True

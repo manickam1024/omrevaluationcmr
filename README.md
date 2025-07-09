@@ -71,125 +71,121 @@ python analyze_omr.py --sample
 
 The analysis creates several outputs in the `outputs/Analysis/` directory:
 
-### 1. Text Report (`analysis_report_YYYYMMDD_HHMMSS.txt`)
-- Overall statistics
-- Difficulty distribution
-- Question type distribution
-- Detailed question-by-question analysis
+1. Console Output
+plaintext
+Copy
+Download
+Loaded 50 questions from omr_sheet1.csv
+Loaded 50 questions from omr_sheet2.csv
+Loaded 50 questions from omr_sheet3.csv
 
-### 2. JSON Data (`analysis_data_YYYYMMDD_HHMMSS.json`)
-- Machine-readable analysis results
-- Can be used for further processing
+Analyzing 3 OMR sheets...
 
-### 3. Visualization Charts (`analysis_charts_YYYYMMDD_HHMMSS.png`)
-- Difficulty distribution pie chart
-- Question type distribution
-- Accuracy by question bar chart
-- Difficulty vs accuracy scatter plot
+Analysis complete!
+Reports saved to: outputs/Analysis
+2. Generated Files
+text
+Copy
+Download
+outputs/
+└── Analysis/
+    ├── difficulty_report.csv
+    ├── individual_reports/
+    │   ├── sheet_1.csv
+    │   ├── sheet_2.csv
+    │   └── sheet_3.csv
+    └── summary.txt
+3. Sample Report Contents
+A. difficulty_report.csv
+Question	Difficulty	Accuracy (%)	Attempts	Correct	Incorrect	Correct Answer	Most Common Wrong	Wrong Answer Distribution
+Q12	Hard	28.6%	3	1	2	C	B	B(2)
+Q05	Medium	58.3%	3	2	1	A	C	C(1)
+Q01	Easy	100%	3	3	0	D	None	None
+Key Features:
 
-### 4. Answer Pattern Heatmap (`answer_distribution_heatmap_YYYYMMDD_HHMMSS.png`)
-- Visual representation of student answer choices
-- Helps identify patterns and common mistakes
+Sorted by difficulty (hardest first)
 
-## Analysis Features
+Shows wrong answer patterns
 
-### Difficulty Classification
-Questions are classified into 5 difficulty levels based on student success rate:
-- **Very Easy**: >80% students correct
-- **Easy**: 60-80% students correct
-- **Medium**: 40-60% students correct
-- **Hard**: 20-40% students correct
-- **Very Hard**: <20% students correct
+Includes attempt statistics across all sheets
 
-### Question Type Classification
-Basic classification includes:
-- **Multiple Choice**: Standard A/B/C/D questions
-- **Conceptual**: Theory and definition based
-- **Computational**: Calculation based
-- **Analytical**: Analysis and comparison
-- **Application**: Practical application
-- **Memory**: Recall and identification
+B. individual_reports/sheet_1.csv
+Question	Marked	Correct	Verdict
+Q01	D	D	Correct
+Q05	A	A	Correct
+Q12	B	C	Incorrect
+Note: Generated for each OMR sheet separately
 
-## Customization
+C. summary.txt
+plaintext
+Copy
+Download
+OMR Analysis Summary
+===================
 
-### Modifying Difficulty Thresholds
-Edit the `difficulty_thresholds` in `src/analysis.py`:
-```python
-self.difficulty_thresholds = {
-    'Very Easy': 0.8,    # Change these values
-    'Easy': 0.6,
-    'Medium': 0.4,
-    'Hard': 0.2,
-    'Very Hard': 0.0
-}
-```
+Difficulty Distribution:
+Easy: 38 questions
+Medium: 9 questions
+Hard: 3 questions
 
-### Adding Question Type Patterns
-Enhance question type detection in `src/analysis.py`:
-```python
-self.question_patterns = {
-    'Your_Type': ['keyword1', 'keyword2'],
-    # Add more patterns
-}
-```
+Top 5 Most Difficult Questions:
+Q12: 28.6% correct (Common wrong: B)
+Q17: 33.3% correct (Common wrong: A)
+Q23: 42.9% correct (Common wrong: D)
+4. Key Metrics Provided
+Question-Level Analysis:
 
-## Integration with Existing Code
+Difficulty classification (Easy/Medium/Hard)
 
-### Minimal Integration
-If you prefer minimal changes to your existing code, just use the standalone analyzer:
+Accuracy percentage across all students
 
-1. Run your existing OMR system
-2. Save console output to file
-3. Run `python analyze_omr.py --console_output_file your_output.txt`
+Most frequently selected wrong answer
 
-### Full Integration
-For full integration, modify your `src/entry.py` to return results data that can be analyzed.
+Aggregate Statistics:
 
-## Troubleshooting
+Total sheets processed
 
-### Common Issues
+Questions sorted by difficulty
 
-1. **No data found**: Ensure your CSV files or console output contain the evaluation table
-2. **Import errors**: Make sure all required packages are installed
-3. **File not found**: Check that output directories and files exist
+Wrong answer distribution patterns
 
-### Debug Mode
-Run with debug information:
-```bash
-python analyze_omr.py --output_dir outputs/samplecmr --verbose
-```
+Per-Sheet Verification:
 
-## Sample Output
+Individual OMR sheet results
 
-```
-OMR ANALYSIS REPORT
-==================================================
+Marked vs correct answers
 
-OVERALL STATISTICS
---------------------
-Total Questions: 40
-Overall Accuracy: 38.13%
+Question-by-question verdicts
 
-DIFFICULTY DISTRIBUTION
--------------------------
-Very Hard: 32 questions (80.0%)
-Hard: 5 questions (12.5%)
-Medium: 3 questions (7.5%)
+5. Special Cases Handled
+Perfect Scores:
 
-QUESTION TYPE DISTRIBUTION
-------------------------------
-Multiple Choice: 40 questions (100.0%)
+Shows "None" for wrong answers if all attempts were correct
 
-DETAILED QUESTION ANALYSIS
-------------------------------
+Unattempted Questions:
 
-Q1:
-  Correct Percentage: 0.0%
-  Difficulty Level: Very Hard
-  Question Type: Multiple Choice
-  Correct Answer: B
-  Answer Distribution: {'A': 1}
-```
+Excluded from reports (only shows attempted questions)
+
+Tie Situations:
+
+When multiple wrong answers are equally common, selects alphabetically first
+
+6. Example Scenario
+For 3 students answering 50 questions each:
+
+Q12 was missed by 2/3 students (66% incorrect)
+
+Q01 was answered correctly by all students
+
+Q05 showed a strong bias toward option C when incorrect
+
+The reports help identify:
+
+Which questions need review (Hard ones)
+
+Common misconceptions (frequent wrong answers)
+
+Overall class performance trends
 
 ## Advanced Features
 
