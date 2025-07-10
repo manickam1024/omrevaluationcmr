@@ -1,217 +1,200 @@
-#!/usr/bin/env python3
-"""
-Enhanced OMR Analysis Script for samplecmr folder
-- Processes multiple OMR sheets
-- Calculates question difficulty
-- Generates comprehensive reports
-"""
-
 import csv
+import statistics
 import argparse
+import re
 from pathlib import Path
-from collections import defaultdict
 from typing import List, Dict, Any
 
-# Difficulty thresholds
-DIFFICULTY_LEVELS = {
-    'Easy': 70,    # >=70% correct
-    'Medium': 40,  # 40-69% correct 
-    'Hard': 0      # <40% correct
+# Difficulty level thresholds
+DIFFICULTY_THRESHOLDS = {
+    'Easy': 0.7,
+    'Medium': 0.4,
+    'Hard': 0.0
 }
 
-def load_omr_data(file_path: str) -> List[Dict[str, Any]]:
-    """Load OMR data from CSV file"""
-    results = []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                results.append({
-                    'question': row.get('question', ''),
-                    'marked_answer': row.get('marked_answer', ''),
-                    'correct_answer': row.get('correct_answer', ''),
-                    'is_correct': row.get('verdict', '').lower() == 'correct'
+def convert_student_csv_to_analysis_format(input_csv: Path, output_csv: Path, answer_key: Dict[str, str]):
+    with input_csv.open('r') as infile, output_csv.open('w', newline='') as outfile:
+        reader = csv.DictReader(infile)
+        writer = csv.DictWriter(outfile, fieldnames=['question', 'correct_answer', 'marked_answer', 'is_correct', 'delta'])
+        writer.writeheader()
+        for row in reader:
+            for i in range(1, 41):
+                qid = f'q{i}'
+                marked = row[qid].strip().upper()
+                correct = answer_key.get(qid, '')
+                is_correct = marked == correct
+                writer.writerow({
+                    'question': qid.upper(),
+                    'correct_answer': correct,
+                    'marked_answer': marked,
+                    'is_correct': str(is_correct).lower(),
+                    'delta': 0.0
                 })
-    except Exception as e:
-        print(f"Error loading {file_path}: {e}")
-    return results
 
-def analyze_multiple_sheets(all_sheets: List[List[Dict[str, Any]]]) -> Dict[str, Dict[str, Any]]:
-    """Analyze difficulty across multiple OMR sheets"""
-    question_stats = defaultdict(lambda: {
-        'total_attempts': 0,
-        'correct_attempts': 0,
-        'incorrect_attempts': 0,
-        'correct_answer': None,
-        'wrong_answers': defaultdict(int),
-        'sheets_attempted': set()
-    })
+def analyze_batch_results(all_results: List[Dict[str, Any]], output_dir: str):
+    if not all_results:
+        print("No results to analyze")
+        return
 
-    # Process all sheets
-    for sheet_idx, sheet_results in enumerate(all_sheets):
-        for result in sheet_results:
-            q = result['question']
-            stats = question_stats[q]
-            
+    total_sheets = len(all_results)
+    analysis_dir = Path(output_dir)
+    analysis_dir.mkdir(parents=True, exist_ok=True)
+    question_stats = aggregate_question_stats(all_results, total_sheets)
+    generate_text_report(question_stats, analysis_dir, total_sheets)
+    generate_csv_report(question_stats, analysis_dir)
+    generate_summary_report(question_stats, analysis_dir)
+    print("\nBatch analysis complete!")
+    print(f"Reports saved to: {analysis_dir}")
+
+def aggregate_question_stats(all_results: List[Dict[str, Any]], total_sheets: int) -> Dict[str, Dict[str, Any]]:
+    question_stats = {}
+    for result in all_results:
+        for q in result['results']:
+            qid = q['question']
+            if qid not in question_stats:
+                question_stats[qid] = {
+                    'total_attempts': 0,
+                    'correct_attempts': 0,
+                    'marked_answers': {},
+                    'correct_answer': q['correct_answer'],
+                    'deltas': []
+                }
+            stats = question_stats[qid]
             stats['total_attempts'] += 1
-            stats['sheets_attempted'].add(sheet_idx)
-            
-            if result['is_correct']:
+            marked = q['marked_answer']
+            if marked:
+                stats['marked_answers'][marked] = stats['marked_answers'].get(marked, 0) + 1
+            if q['is_correct']:
                 stats['correct_attempts'] += 1
-            else:
-                stats['incorrect_attempts'] += 1
-                marked = result['marked_answer']
-                stats['wrong_answers'][marked] += 1
-            
-            if not stats['correct_answer']:
-                stats['correct_answer'] = result['correct_answer']
-
-    # Calculate difficulty
-    for q, stats in question_stats.items():
-        if stats['total_attempts'] > 0:
-            stats['accuracy'] = (stats['correct_attempts'] / stats['total_attempts']) * 100
-            stats['difficulty'] = get_difficulty_level(stats['accuracy'])
-            
-            # Find most common wrong answer
-            if stats['wrong_answers']:
-                stats['most_common_wrong'] = max(
-                    stats['wrong_answers'].items(),
-                    key=lambda x: x[1]
-                )[0]
-            else:
-                stats['most_common_wrong'] = None
-    
+            stats['deltas'].append(q['delta'])
+    for qid, stats in question_stats.items():
+        stats['participation_rate'] = stats['total_attempts'] / total_sheets
+        stats['correctness_rate'] = stats['correct_attempts'] / stats['total_attempts']
+        stats['difficulty'] = calculate_difficulty(stats['correctness_rate'])
+        stats['answer_distribution'] = normalize_distribution(stats['marked_answers'])
+        stats['delta_avg'] = statistics.mean(stats['deltas']) if stats['deltas'] else 0
     return question_stats
 
-def get_difficulty_level(accuracy: float) -> str:
-    """Classify question difficulty"""
-    for level, threshold in DIFFICULTY_LEVELS.items():
-        if accuracy >= threshold:
-            return level
-    return 'Hard'
+def calculate_difficulty(correctness_rate: float) -> str:
+    if correctness_rate >= DIFFICULTY_THRESHOLDS['Easy']:
+        return 'Easy'
+    elif correctness_rate >= DIFFICULTY_THRESHOLDS['Medium']:
+        return 'Medium'
+    else:
+        return 'Hard'
 
-def generate_difficulty_report(stats: Dict[str, Dict[str, Any]], output_dir: str):
-    """Generate CSV report of question difficulties"""
-    report_path = Path(output_dir) / "Analysis" / "difficulty_report.csv"
-    report_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    with open(report_path, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow([
-            'Question', 'Difficulty', 'Accuracy (%)', 
-            'Attempts', 'Correct', 'Incorrect',
-            'Correct Answer', 'Most Common Wrong', 
-            'Wrong Answer Distribution'
-        ])
-        
-        for q, data in sorted(stats.items(), key=lambda x: x[1]['accuracy']):
-            wrong_dist = ', '.join(
-                f"{ans}({count})" for ans, count in data['wrong_answers'].items()
-            ) if data['wrong_answers'] else 'None'
-            
-            writer.writerow([
-                q,
-                data['difficulty'],
-                f"{data['accuracy']:.1f}",
-                data['total_attempts'],
-                data['correct_attempts'],
-                data['incorrect_attempts'],
-                data['correct_answer'],
-                data['most_common_wrong'] or 'None',
-                wrong_dist
-            ])
+def normalize_distribution(dist: Dict[str, int]) -> Dict[str, float]:
+    total = sum(dist.values()) or 1
+    return {k: v / total for k, v in dist.items()}
 
-def generate_individual_reports(all_sheets: List[List[Dict[str, Any]]], output_dir: str):
-    """Generate reports for each OMR sheet"""
-    report_dir = Path(output_dir) / "Analysis" / "individual_reports"
-    report_dir.mkdir(parents=True, exist_ok=True)
-    
-    for i, sheet in enumerate(all_sheets):
-        report_path = report_dir / f"sheet_{i+1}.csv"
-        with open(report_path, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['Question', 'Marked', 'Correct', 'Verdict'])
-            
-            for q in sheet:
-                writer.writerow([
-                    q['question'],
-                    q['marked_answer'],
-                    q['correct_answer'],
-                    'Correct' if q['is_correct'] else 'Incorrect'
-                ])
+def generate_text_report(question_stats: Dict[str, Dict[str, Any]], output_dir: Path, total_sheets: int):
+    report_path = output_dir / "detailed_analysis.txt"
+    with report_path.open('w') as f:
+        f.write("OMR BATCH ANALYSIS REPORT\n")
+        f.write("=" * 50 + "\n\n")
+        f.write(f"Total Questions Analyzed: {len(question_stats)}\n")
+        f.write(f"Total OMR Sheets Processed: {total_sheets}\n\n")
+        f.write("QUESTION STATISTICS:\n")
+        f.write("=" * 50 + "\n")
+        for qid, stats in sorted(question_stats.items(), key=lambda x: natural_sort_key(x[0])):
+            f.write(f"\nQuestion {qid}:\n")
+            f.write(f"- Correct Answer: {stats['correct_answer']}\n")
+            f.write(f"- Participation: {stats['participation_rate']:.1%} of sheets\n")
+            f.write(f"- Correctness Rate: {stats['correctness_rate']:.1%}\n")
+            f.write(f"- Difficulty: {stats['difficulty']}\n")
+            f.write(f"- Average Delta: {stats['delta_avg']:.2f}\n")
+            f.write("- Answer Distribution:\n")
+            for opt, perc in stats['answer_distribution'].items():
+                f.write(f"  {opt}: {perc:.1%}\n")
+    print(f"Generated text report: {report_path}")
 
-def generate_summary(stats: Dict[str, Dict[str, Any]], output_dir: str):
-    """Generate summary text report"""
-    summary_path = Path(output_dir) / "Analysis" / "summary.txt"
-    
-    with open(summary_path, 'w', encoding='utf-8') as f:
-        f.write("OMR Analysis Summary\n")
-        f.write("===================\n\n")
-        
-        # Difficulty distribution
-        diff_counts = defaultdict(int)
-        for q in stats.values():
-            diff_counts[q['difficulty']] += 1
-        
-        f.write("Difficulty Distribution:\n")
+def generate_csv_report(question_stats: Dict[str, Dict[str, Any]], output_dir: Path):
+    report_path = output_dir / "statistical_summary.csv"
+    fieldnames = ['question', 'correct_answer', 'participation_rate', 'correctness_rate', 'difficulty', 'delta_avg']
+    with report_path.open('w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for qid, stats in sorted(question_stats.items(), key=lambda x: natural_sort_key(x[0])):
+            writer.writerow({
+                'question': qid,
+                'correct_answer': stats['correct_answer'],
+                'participation_rate': stats['participation_rate'],
+                'correctness_rate': stats['correctness_rate'],
+                'difficulty': stats['difficulty'],
+                'delta_avg': stats['delta_avg']
+            })
+    print(f"Generated CSV report: {report_path}")
+
+def generate_summary_report(question_stats: Dict[str, Dict[str, Any]], output_dir: Path):
+    report_path = output_dir / "summary_statistics.txt"
+    total_questions = len(question_stats)
+    participation_rates = [s['participation_rate'] for s in question_stats.values()]
+    correctness_rates = [s['correctness_rate'] for s in question_stats.values()]
+    difficulties = [s['difficulty'] for s in question_stats.values()]
+    with report_path.open('w') as f:
+        f.write("SUMMARY STATISTICS\n")
+        f.write("=" * 50 + "\n\n")
+        f.write(f"Total Questions: {total_questions}\n")
+        f.write(f"Average Participation Rate: {statistics.mean(participation_rates):.1%}\n")
+        f.write(f"Average Correctness Rate: {statistics.mean(correctness_rates):.1%}\n\n")
         for level in ['Easy', 'Medium', 'Hard']:
-            f.write(f"{level}: {diff_counts.get(level, 0)} questions\n")
-        
-        # Top difficult questions
-        f.write("\nTop 5 Most Difficult Questions:\n")
-        difficult = sorted(
-            stats.items(),
-            key=lambda x: x[1]['accuracy']
-        )[:5]
-        
-        for q, data in difficult:
-            f.write(f"{q}: {data['accuracy']:.1f}% correct")
-            if data['most_common_wrong']:
-                f.write(f" (Common wrong: {data['most_common_wrong']})")
-            f.write("\n")
+            count = difficulties.count(level)
+            f.write(f"- {level}: {count} questions ({count / total_questions:.1%})\n")
+    print(f"Generated summary report: {report_path}")
+
+def natural_sort_key(s: str) -> List[Any]:
+    return [int(text) if text.isdigit() else text.lower() for text in re.split('([0-9]+)', s)]
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="OMR Batch Analysis Tool")
+    parser.add_argument("--output_dir", type=str, required=True, help="Output directory for reports")
+    return parser.parse_args()
+
+def analyze_from_student_csv(output_dir: str):
+    results_dir = Path("outputs/samplecmr/Results")
+    csv_files = list(results_dir.glob("*.csv"))
+
+    if not csv_files:
+        print("❌ No CSV files found in outputs/samplecmr/Results/")
+        return
+
+    latest_file = max(csv_files, key=lambda f: f.stat().st_mtime)
+    print(f"📄 Automatically picked latest CSV: {latest_file.name}")
+
+    converted_csv = results_dir / "converted_results.csv"
+    answer_key = {
+        f'q{i}': ans for i, ans in enumerate([
+            "B", "C", "A", "B", "C", "B", "C", "A", "D", "C",
+            "C", "A", "B", "D", "C", "B", "D", "C", "B", "A",
+            "C", "A", "B", "D", "A", "D", "A", "B", "D", "C",
+            "B", "A", "A", "C", "B", "D", "B", "C", "B", "B"
+        ], 1)
+    }
+
+    convert_student_csv_to_analysis_format(latest_file, converted_csv, answer_key)
+
+    results = []
+    with converted_csv.open('r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            results.append({
+                'question': row['question'],
+                'correct_answer': row['correct_answer'],
+                'marked_answer': row['marked_answer'],
+                'is_correct': row['is_correct'].lower() == 'true',
+                'delta': float(row['delta'])
+            })
+
+    analyze_batch_results([{'results': results}], output_dir)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-i", "--input-dir",
-        default="outputs",  # Assuming CSVs are in outputs/
-        help="Directory containing OMR result CSVs"
-    )
-    parser.add_argument(
-        "-o", "--output-dir",
-        default="outputs",
-        help="Output directory for reports"
-    )
-    args = parser.parse_args()
-    
-    # Find all CSV files in samplecmr results
-    csv_files = list(Path(args.input_dir).glob("*.csv"))
-    if not csv_files:
-        print(f"No CSV files found in {args.input_dir}")
-        return
-    
-    # Load all sheets
-    all_sheets = []
-    for csv_file in csv_files:
-        sheet = load_omr_data(str(csv_file))
-        if sheet:
-            all_sheets.append(sheet)
-            print(f"Loaded {len(sheet)} questions from {csv_file.name}")
-    
-    if not all_sheets:
-        print("No valid OMR data found")
-        return
-    
-    # Analyze and generate reports
-    print(f"\nAnalyzing {len(all_sheets)} OMR sheets...")
-    stats = analyze_multiple_sheets(all_sheets)
-    
-    generate_difficulty_report(stats, args.output_dir)
-    generate_individual_reports(all_sheets, args.output_dir)
-    generate_summary(stats, args.output_dir)
-    
+    args = parse_arguments()
+    Path(args.output_dir).mkdir(parents=True, exist_ok=True)
+    print("Starting OMR Analysis...")
+    print(f"Output directory: {args.output_dir}")
+    print("\nAnalyzing latest file in: outputs/samplecmr/Results/")
+    analyze_from_student_csv(args.output_dir)
     print("\nAnalysis complete!")
-    print(f"Reports saved to: {Path(args.output_dir)/'Analysis'}")
 
 if __name__ == "__main__":
     main()

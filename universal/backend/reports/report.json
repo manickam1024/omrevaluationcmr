@@ -1,0 +1,86 @@
+{
+  "Q1": {
+    "total_attempts": 2,
+    "correct_attempts": 1,
+    "marked_answers": {
+      "A": 1,
+      "B": 1
+    },
+    "correct_answer": "A",
+    "deltas": [
+      0.0,
+      0.0
+    ],
+    "participation_rate": 2.0,
+    "correctness_rate": 0.5,
+    "difficulty": "Medium",
+    "answer_distribution": {
+      "A": 0.5,
+      "B": 0.5
+    },
+    "delta_avg": 0.0
+  },
+  "Q2": {
+    "total_attempts": 2,
+    "correct_attempts": 1,
+    "marked_answers": {
+      "C": 1,
+      "D": 1
+    },
+    "correct_answer": "C",
+    "deltas": [
+      0.0,
+      0.0
+    ],
+    "participation_rate": 2.0,
+    "correctness_rate": 0.5,
+    "difficulty": "Medium",
+    "answer_distribution": {
+      "C": 0.5,
+      "D": 0.5
+    },
+    "delta_avg": 0.0
+  },
+  "Q3": {
+    "total_attempts": 2,
+    "correct_attempts": 1,
+    "marked_answers": {
+      "B": 1,
+      "A": 1
+    },
+    "correct_answer": "B",
+    "deltas": [
+      0.0,
+      0.0
+    ],
+    "participation_rate": 2.0,
+    "correctness_rate": 0.5,
+    "difficulty": "Medium",
+    "answer_distribution": {
+      "B": 0.5,
+      "A": 0.5
+    },
+    "delta_avg": 0.0
+  },
+  "Q4": {
+    "total_attempts": 2,
+    "correct_attempts": 1,
+    "marked_answers": {
+      "B": 1,
+      "C": 1
+    },
+    "correct_answer": "C",
+    "deltas": [
+      0.0,
+      0.0
+    ],
+    "participation_rate": 2.0,
+    "correctness_rate": 0.5,
+    "difficulty": "Medium",
+    "answer_distribution": {
+      "B": 0.5,
+      "C": 0.5
+    },
+    "delta_avg": 0.0
+  }
+}

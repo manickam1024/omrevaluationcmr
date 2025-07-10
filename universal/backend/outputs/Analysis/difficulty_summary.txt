@@ -1,0 +1,9 @@
+DIFFICULTY SUMMARY
+==================================================
+Average Difficulty: 0.00
+Most Difficult Question: Q1
+Easiest Question: Q1
+
+  High (≥0.7): 0
+  Medium (0.4–0.7): 0
+  Low (<0.4): 40

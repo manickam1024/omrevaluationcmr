@@ -49,7 +49,8 @@ python main.py -i inputs/samplecmr -o outputs > omr_output.txt
 
 # Then analyze
 python analyze_omr.py --sample
-python analyze_omr.py --output_dir outputs/samplecmr --console_output_file omr_output.txt
+python analyze_omr.py --output_dir reports
+
 ```
 
 **From CSV files:**
@@ -69,155 +70,65 @@ python analyze_omr.py --sample
 
 ## Generated Reports
 
-The analysis creates several outputs in the `outputs/Analysis/` directory:
+Output Reports
+After running analysis, the following files are generated in outputs/Analysis/:
 
-1. Console Output
-plaintext
+File	Description
+detailed_analysis.txt	Per-question statistics with difficulty, correctness, and answer distribution
+statistical_summary.csv	Summary in CSV format (ideal for spreadsheets or dashboards)
+summary_statistics.txt	Overall statistics, difficulty breakdown
+
+Sample console output:
+
+yaml
 Copy
-Download
-Loaded 50 questions from omr_sheet1.csv
-Loaded 50 questions from omr_sheet2.csv
-Loaded 50 questions from omr_sheet3.csv
+Edit
+OMR BATCH ANALYSIS REPORT
+=========================
 
-Analyzing 3 OMR sheets...
+Total Questions Analyzed: 40
+Total OMR Sheets Processed: 6
 
-Analysis complete!
-Reports saved to: outputs/Analysis
-2. Generated Files
-text
+Question q1:
+- Correct Answer: A
+- Participation: 100.0% of sheets
+- Correctness Rate: 83.3%
+- Difficulty: Easy
+- Average Delta: 0.00
+- Answer Distribution:
+  A: 83.3%
+  B: 16.7%
+...
+📌 Answer Key Format
+The analyze_omr.py script contains a hardcoded answer key like:
+
+python
 Copy
-Download
-outputs/
-└── Analysis/
-    ├── difficulty_report.csv
-    ├── individual_reports/
-    │   ├── sheet_1.csv
-    │   ├── sheet_2.csv
-    │   └── sheet_3.csv
-    └── summary.txt
-3. Sample Report Contents
-A. difficulty_report.csv
-Question	Difficulty	Accuracy (%)	Attempts	Correct	Incorrect	Correct Answer	Most Common Wrong	Wrong Answer Distribution
-Q12	Hard	28.6%	3	1	2	C	B	B(2)
-Q05	Medium	58.3%	3	2	1	A	C	C(1)
-Q01	Easy	100%	3	3	0	D	None	None
-Key Features:
+Edit
+answer_key = {
+    'q1': 'B', 'q2': 'C', ..., 'q40': 'B'
+}
+To customize, edit the answer_key dictionary in analyze_omr.py > analyze_from_student_csv().
 
-Sorted by difficulty (hardest first)
+🧪 Testing the Analysis
+Use the sample mode to verify everything works:
 
-Shows wrong answer patterns
-
-Includes attempt statistics across all sheets
-
-B. individual_reports/sheet_1.csv
-Question	Marked	Correct	Verdict
-Q01	D	D	Correct
-Q05	A	A	Correct
-Q12	B	C	Incorrect
-Note: Generated for each OMR sheet separately
-
-C. summary.txt
-plaintext
+bash
 Copy
-Download
-OMR Analysis Summary
-===================
+Edit
+python analyze_omr.py --sample
+This mode uses built-in answer keys and picks the latest CSV file from:
 
-Difficulty Distribution:
-Easy: 38 questions
-Medium: 9 questions
-Hard: 3 questions
+bash
+Copy
+Edit
+outputs/samplecmr/Results/
+🙋 Support
+For help:
 
-Top 5 Most Difficult Questions:
-Q12: 28.6% correct (Common wrong: B)
-Q17: 33.3% correct (Common wrong: A)
-Q23: 42.9% correct (Common wrong: D)
-4. Key Metrics Provided
-Question-Level Analysis:
+Ensure your directory matches the expected structure.
 
-Difficulty classification (Easy/Medium/Hard)
+Validate all Python dependencies are installed.
 
-Accuracy percentage across all students
+Ensure your result CSVs are properly formatted.
 
-Most frequently selected wrong answer
-
-Aggregate Statistics:
-
-Total sheets processed
-
-Questions sorted by difficulty
-
-Wrong answer distribution patterns
-
-Per-Sheet Verification:
-
-Individual OMR sheet results
-
-Marked vs correct answers
-
-Question-by-question verdicts
-
-5. Special Cases Handled
-Perfect Scores:
-
-Shows "None" for wrong answers if all attempts were correct
-
-Unattempted Questions:
-
-Excluded from reports (only shows attempted questions)
-
-Tie Situations:
-
-When multiple wrong answers are equally common, selects alphabetically first
-
-6. Example Scenario
-For 3 students answering 50 questions each:
-
-Q12 was missed by 2/3 students (66% incorrect)
-
-Q01 was answered correctly by all students
-
-Q05 showed a strong bias toward option C when incorrect
-
-The reports help identify:
-
-Which questions need review (Hard ones)
-
-Common misconceptions (frequent wrong answers)
-
-Overall class performance trends
-
-## Advanced Features
-
-### Batch Processing
-Process multiple OMR result sets:
-```bash
-for dir in outputs/*/; do
-    python analyze_omr.py --output_dir "$dir"
-done
-```
-
-### Custom Analysis Scripts
-Use the analysis engine in your own scripts:
-```python
-from src.analysis import OMRAnalyzer
-
-analyzer = OMRAnalyzer("output_directory")
-results = [...]  # Your results data
-analyzer.analyze_results(results)
-```
-
-## Contributing
-
-To extend the analysis system:
-1. Add new analysis methods to `OMRAnalyzer` class
-2. Enhance question type detection algorithms
-3. Add new visualization types
-4. Improve result parsing for different OMR formats
-
-## Support
-
-For issues or questions:
-1. Check that all files are in correct locations
-2. Verify required packages are installed
-3. Ensure your OMR output format matches expected structure
