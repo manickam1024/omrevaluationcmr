@@ -12,6 +12,16 @@ DIFFICULTY_THRESHOLDS = {
     'Hard': 0.0
 }
 
+def load_answer_key_from_csv(answer_key_path: Path) -> Dict[str, str]:
+    answer_key = {}
+    with answer_key_path.open('r') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            qid = row['question'].strip().lower()
+            correct = row['correct_answer'].strip().upper()
+            answer_key[qid] = correct
+    return answer_key
+
 def convert_student_csv_to_analysis_format(input_csv: Path, output_csv: Path, answer_key: Dict[str, str]):
     with input_csv.open('r') as infile, output_csv.open('w', newline='') as outfile:
         reader = csv.DictReader(infile)
@@ -24,7 +34,7 @@ def convert_student_csv_to_analysis_format(input_csv: Path, output_csv: Path, an
                 correct = answer_key.get(qid, '')
                 is_correct = marked == correct
                 writer.writerow({
-                    'question': qid.upper(),
+                    'question': qid,
                     'correct_answer': correct,
                     'marked_answer': marked,
                     'is_correct': str(is_correct).lower(),
@@ -67,6 +77,7 @@ def aggregate_question_stats(all_results: List[Dict[str, Any]], total_sheets: in
             if q['is_correct']:
                 stats['correct_attempts'] += 1
             stats['deltas'].append(q['delta'])
+
     for qid, stats in question_stats.items():
         stats['participation_rate'] = stats['total_attempts'] / total_sheets
         stats['correctness_rate'] = stats['correct_attempts'] / stats['total_attempts']
@@ -152,8 +163,13 @@ def parse_arguments():
 
 def analyze_from_student_csv(output_dir: str):
     results_dir = Path("outputs/samplecmr/Results")
-    csv_files = list(results_dir.glob("*.csv"))
+    answer_key_path = Path("outputs/samplecmr/answer_key.csv")
 
+    if not answer_key_path.exists():
+        print(f"❌ Answer key not found at {answer_key_path}")
+        return
+
+    csv_files = list(results_dir.glob("*.csv"))
     if not csv_files:
         print("❌ No CSV files found in outputs/samplecmr/Results/")
         return
@@ -162,15 +178,7 @@ def analyze_from_student_csv(output_dir: str):
     print(f"📄 Automatically picked latest CSV: {latest_file.name}")
 
     converted_csv = results_dir / "converted_results.csv"
-    answer_key = {
-        f'q{i}': ans for i, ans in enumerate([
-            "B", "C", "A", "B", "C", "B", "C", "A", "D", "C",
-            "C", "A", "B", "D", "C", "B", "D", "C", "B", "A",
-            "C", "A", "B", "D", "A", "D", "A", "B", "D", "C",
-            "B", "A", "A", "C", "B", "D", "B", "C", "B", "B"
-        ], 1)
-    }
-
+    answer_key = load_answer_key_from_csv(answer_key_path)
     convert_student_csv_to_analysis_format(latest_file, converted_csv, answer_key)
 
     results = []
