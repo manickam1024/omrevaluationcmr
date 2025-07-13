@@ -9,7 +9,7 @@ QUESTION STATISTICS:
 
 Question q1:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -19,7 +19,7 @@ Question q1:
 
 Question q2:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -28,7 +28,7 @@ Question q2:
 
 Question q3:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -39,7 +39,7 @@ Question q3:
 
 Question q4:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -50,7 +50,7 @@ Question q4:
 
 Question q5:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -62,7 +62,7 @@ Question q5:
 
 Question q6:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -73,7 +73,7 @@ Question q6:
 
 Question q7:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -82,7 +82,7 @@ Question q7:
 
 Question q8:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -93,7 +93,7 @@ Question q8:
 
 Question q9:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 75.0%
 - Difficulty: Easy
 - Average Delta: 0.00
@@ -102,7 +102,7 @@ Question q9:
 
 Question q10:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 75.0%
 - Difficulty: Easy
 - Average Delta: 0.00
@@ -111,7 +111,7 @@ Question q10:
 
 Question q11:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -121,7 +121,7 @@ Question q11:
 
 Question q12:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -131,7 +131,7 @@ Question q12:
 
 Question q13:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -141,7 +141,7 @@ Question q13:
 
 Question q14:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -151,7 +151,7 @@ Question q14:
 
 Question q15:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 50.0%
 - Difficulty: Medium
 - Average Delta: 0.00
@@ -161,7 +161,7 @@ Question q15:
 
 Question q16:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -170,7 +170,7 @@ Question q16:
 
 Question q17:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 75.0%
 - Difficulty: Easy
 - Average Delta: 0.00
@@ -179,7 +179,7 @@ Question q17:
 
 Question q18:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 75.0%
 - Difficulty: Easy
 - Average Delta: 0.00
@@ -188,7 +188,7 @@ Question q18:
 
 Question q19:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -197,7 +197,7 @@ Question q19:
 
 Question q20:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -206,7 +206,7 @@ Question q20:
 
 Question q21:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -216,7 +216,7 @@ Question q21:
 
 Question q22:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -225,7 +225,7 @@ Question q22:
 
 Question q23:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -235,7 +235,7 @@ Question q23:
 
 Question q24:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 50.0%
 - Difficulty: Medium
 - Average Delta: 0.00
@@ -245,7 +245,7 @@ Question q24:
 
 Question q25:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -254,7 +254,7 @@ Question q25:
 
 Question q26:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -263,7 +263,7 @@ Question q26:
 
 Question q27:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -272,7 +272,7 @@ Question q27:
 
 Question q28:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -281,7 +281,7 @@ Question q28:
 
 Question q29:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -290,7 +290,7 @@ Question q29:
 
 Question q30:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -299,7 +299,7 @@ Question q30:
 
 Question q31:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -309,7 +309,7 @@ Question q31:
 
 Question q32:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -319,7 +319,7 @@ Question q32:
 
 Question q33:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -329,7 +329,7 @@ Question q33:
 
 Question q34:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -339,7 +339,7 @@ Question q34:
 
 Question q35:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -349,7 +349,7 @@ Question q35:
 
 Question q36:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -359,7 +359,7 @@ Question q36:
 
 Question q37:
 - Correct Answer: D
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -369,7 +369,7 @@ Question q37:
 
 Question q38:
 - Correct Answer: B
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -379,7 +379,7 @@ Question q38:
 
 Question q39:
 - Correct Answer: A
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 25.0%
 - Difficulty: Hard
 - Average Delta: 0.00
@@ -389,7 +389,7 @@ Question q39:
 
 Question q40:
 - Correct Answer: C
-- Participation: 1200.0% of sheets
+- Participation: 400.0% of sheets
 - Correctness Rate: 0.0%
 - Difficulty: Hard
 - Average Delta: 0.00
