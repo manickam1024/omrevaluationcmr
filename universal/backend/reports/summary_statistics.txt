@@ -2,9 +2,9 @@ SUMMARY STATISTICS
 ==================================================
 
 Total Questions: 40
-Average Participation Rate: 400.0%
-Average Correctness Rate: 6.2%
+Average Participation Rate: 100.0%
+Average Correctness Rate: 0.0%
 
 - Easy: 0 questions (0.0%)
-- Medium: 1 questions (2.5%)
-- Hard: 39 questions (97.5%)
+- Medium: 0 questions (0.0%)
+- Hard: 40 questions (100.0%)

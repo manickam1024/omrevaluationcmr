@@ -101,14 +101,24 @@ def run_analysis(output_dir: str, all_results: List[Dict[str, Any]]):
         logger.error(f"Error running analysis: {e}")
 
 def process_single_omr(input_path: Path, args: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Process a single OMR sheet"""
+    """Process a single OMR sheet and extract USN"""
     try:
         if not input_path.exists():
             logger.error(f"Input path does not exist: {input_path}")
             return []
 
         logger.info(f"Processing OMR: {input_path.name}")
-        return entry_point(input_path, args)
+        results = entry_point(input_path, args)
+        
+        # Extract and log USN if available
+        usn = ""
+        if results and 'usn' in results[0]:
+            usn = results[0]['usn']
+            logger.info(f"Detected USN: {usn}")
+        else:
+            logger.warning("USN not detected in results")
+            
+        return results
 
     except Exception as e:
         logger.error(f"Error processing {input_path}: {e}")
@@ -130,23 +140,43 @@ def entry_point_for_args(args):
                 if omr_file.suffix.lower() in ['.jpg', '.jpeg', '.png', '.pdf']:
                     results = process_single_omr(omr_file, args)
                     if results:
+                        # Add USN to results metadata
+                        usn = results[0].get('usn', '') if results else ''
                         all_results.append({
                             'omr_file': str(omr_file),
+                            'usn': usn,
                             'results': results
                         })
         else:
             # Process a single OMR sheet or directory
             results = process_single_omr(root_path, args)
             if results:
+                usn = results[0].get('usn', '') if results else ''
                 all_results.append({
                     'omr_file': str(root_path),
+                    'usn': usn,
                     'results': results
                 })
 
-    # Save raw results
-    Path(args["output_dir"]).mkdir(parents=True, exist_ok=True)
-    with open(Path(args["output_dir"]) / "raw_results.json", 'w') as f:
+    # Save raw results with USN
+    output_path = Path(args["output_dir"])
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    with open(output_path / "raw_results.json", 'w') as f:
         json.dump(all_results, f, indent=2)
+
+    # Generate CSV summary with USN
+    csv_path = output_path / "results_summary.csv"
+    with open(csv_path, 'w') as f:
+        f.write("USN,Filename,Score\n")
+        for result in all_results:
+            usn = result.get('usn', 'N/A')
+            filename = Path(result['omr_file']).name
+            # Get the total score from the first page result
+            score = result['results'][0].get('total_score', 0) if result['results'] else 0
+            f.write(f"{usn},{filename},{score}\n")
+    
+    logger.info(f"Results summary saved to: {csv_path}")
 
     # Run analysis if enabled
     if args.get("analyze", False) and all_results:

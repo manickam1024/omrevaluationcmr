@@ -1,1 +1,66 @@
-[]
+[
+  {
+    "omr_file": "inputs",
+    "usn": "DDDDDDDDDD",
+    "results": [
+      {
+        "file_name": "sheet1.jpg",
+        "file_path": "inputs\\samplecmr\\sheet1.jpg",
+        "usn": "DDDDDDDDDD",
+        "score": 15.25,
+        "responses": {
+          "q36": "B",
+          "q35": "B",
+          "char6": "D",
+          "q7": "C",
+          "q11": "C",
+          "q32": "B",
+          "q8": "B",
+          "q12": "C",
+          "q21": "C",
+          "char8": "D",
+          "q13": "C",
+          "q31": "B",
+          "q30": "D",
+          "q3": "B",
+          "q33": "A",
+          "q24": "A",
+          "q15": "B",
+          "q14": "D",
+          "q25": "D",
+          "q37": "B",
+          "char5": "D",
+          "q40": "B",
+          "q28": "A",
+          "q20": "A",
+          "q38": "C",
+          "q16": "B",
+          "q19": "B",
+          "char9": "D",
+          "q4": "A",
+          "q9": "C",
+          "q10": "A",
+          "q22": "B",
+          "q39": "B",
+          "q29": "D",
+          "char7": "D",
+          "char4": "D",
+          "q6": "B",
+          "q5": "A",
+          "q18": "B",
+          "q27": "A",
+          "q26": "D",
+          "char3": "D",
+          "q23": "B",
+          "q1": "A",
+          "char1": "D",
+          "q17": "C",
+          "q2": "C",
+          "q34": "B",
+          "char10": "D",
+          "char2": "D"
+        }
+      }
+    ]
+  }
+]

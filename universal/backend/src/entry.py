@@ -1,9 +1,9 @@
 """
 
- OMRChecker
+OMRChecker
 
- Author: Udayraj Deshmukh
- Github: https://github.com/Udayraj123
+Author: Udayraj Deshmukh
+Github: https://github.com/Udayraj123
 
 """
 import os
@@ -28,13 +28,57 @@ from src.utils.parsing import get_concatenated_response, open_config_with_defaul
 # Load processors
 STATS = Stats()
 
+def extract_usn_from_response(omr_response):
+    """Extract USN from the response dictionary"""
+    usn = ""
+    for i in range(1, 11):
+        char_key = f"char{i}"
+        if char_key in omr_response:
+            val = omr_response[char_key]
+            # Handle None values (unmarked bubbles)
+            usn += str(val) if val is not None else ""
+    return usn
+
+def check_and_move(error_code, file_path, filepath2):
+    """Dummy function for file movement (to be implemented)"""
+    STATS.files_not_moved += 1
+    return True
+
+def print_stats(start_time, files_counter, tuning_config):
+    """Print processing statistics"""
+    time_checking = max(1, round(time() - start_time, 2))
+    log = logger.info
+    log("")
+    log(f"{'Total file(s) moved': <27}: {STATS.files_moved}")
+    log(f"{'Total file(s) not moved': <27}: {STATS.files_not_moved}")
+    log("--------------------------------")
+    log(
+        f"{'Total file(s) processed': <27}: {files_counter} ({'Sum Tallied!' if files_counter == (STATS.files_moved + STATS.files_not_moved) else 'Not Tallying!'})"
+    )
+
+    if tuning_config.outputs.show_image_level <= 0:
+        log(
+            f"\nFinished Checking {files_counter} file(s) in {round(time_checking, 1)} seconds i.e. ~{round(time_checking / 60, 1)} minute(s)."
+        )
+        log(
+            f"{'OMR Processing Rate': <27}: \t ~ {round(time_checking / files_counter, 2)} seconds/OMR"
+        )
+        log(
+            f"{'OMR Processing Speed': <27}: \t ~ {round((files_counter * 60) / time_checking, 2)} OMRs/minute"
+        )
+    else:
+        log(f"\n{'Total script time': <27}: {time_checking} seconds")
+
+    if tuning_config.outputs.show_image_level <= 1:
+        log(
+            "\nTip: To see some awesome visuals, open config.json and increase 'show_image_level'"
+        )
 
 def entry_point(input_dir, args):
     if not os.path.exists(input_dir):
         raise Exception(f"Given input directory does not exist: '{input_dir}'")
     curr_dir = input_dir
     return process_dir(input_dir, curr_dir, args)
-
 
 def print_config_summary(
     curr_dir,
@@ -68,7 +112,6 @@ def print_config_summary(
         f"{[pp.__class__.__name__ for pp in template.pre_processors]}",
     )
     console.print(table, justify="center")
-
 
 def process_dir(
     root_dir,
@@ -126,6 +169,7 @@ def process_dir(
 
     omr_files = [f for f in omr_files if f not in excluded_files]
 
+    results = []
     if omr_files:
         if not template:
             logger.error(
@@ -152,13 +196,14 @@ def process_dir(
         if args["setLayout"]:
             show_template_layouts(omr_files, template, tuning_config)
         else:
-            process_files(
+            file_results = process_files(
                 omr_files,
                 template,
                 tuning_config,
                 evaluation_config,
                 outputs_namespace,
             )
+            results.extend(file_results)
 
     elif not subdirs:
         # Each subdirectory should have images or should be non-leaf
@@ -169,7 +214,7 @@ def process_dir(
 
     # recursively process sub-folders
     for d in subdirs:
-        process_dir(
+        sub_results = process_dir(
             root_dir,
             d,
             args,
@@ -177,7 +222,9 @@ def process_dir(
             tuning_config,
             evaluation_config,
         )
-
+        results.extend(sub_results)
+    
+    return results
 
 def show_template_layouts(omr_files, template, tuning_config):
     for file_path in omr_files:
@@ -194,7 +241,6 @@ def show_template_layouts(omr_files, template, tuning_config):
             f"Template Layout: {file_name}", template_layout, 1, 1, config=tuning_config
         )
 
-
 def process_files(
     omr_files,
     template,
@@ -205,10 +251,21 @@ def process_files(
     start_time = int(time())
     files_counter = 0
     STATS.files_not_moved = 0
+    file_results = []
 
     for file_path in omr_files:
         files_counter += 1
         file_name = file_path.name
+        # Define file_id (filename without extension)
+        file_id = Path(file_name).stem
+        
+        file_result = {
+            'file_name': file_name,
+            'file_path': str(file_path),
+            'usn': '',
+            'score': 0,
+            'responses': {}
+        }
 
         in_omr = cv2.imread(str(file_path), cv2.IMREAD_GRAYSCALE)
 
@@ -247,23 +304,37 @@ def process_files(
                     header=False,
                     index=False,
                 )
+            
+            file_results.append(file_result)
             continue
 
-        # uniquify
-        file_id = str(file_name)
+        # Read OMR responses
         save_dir = outputs_namespace.paths.save_marked_dir
+        
+        # Create a proper filename for saving
+        marked_filename = f"{file_id}_marked.jpg"
+        
         (
             response_dict,
             final_marked,
             multi_marked,
             _,
         ) = template.image_instance_ops.read_omr_response(
-            template, image=in_omr, name=file_id, save_dir=save_dir
+            template, image=in_omr, name=marked_filename, save_dir=save_dir
         )
 
-        # TODO: move inner try catch here
-        # concatenate roll nos, set unmarked responses, etc
+        # Get concatenated response
         omr_response = get_concatenated_response(response_dict, template)
+        file_result['responses'] = omr_response
+
+        # Extract USN from response
+        try:
+            usn = extract_usn_from_response(omr_response)
+            file_result['usn'] = usn
+            logger.info(f"Detected USN: {usn}")
+        except Exception as e:
+            logger.error(f"Error extracting USN: {e}")
+            usn = ""
 
         if (
             evaluation_config is None
@@ -281,13 +352,17 @@ def process_files(
             )
         else:
             logger.info(f"(/{files_counter}) Processed file: '{file_id}'")
+        
+        file_result['score'] = score
 
         if tuning_config.outputs.show_image_level >= 2:
+            # Display the marked image
+            display_img = ImageUtils.resize_util_h(
+                final_marked, int(tuning_config.dimensions.display_height * 1.3)
+            )
             InteractionUtils.show(
-                f"Final Marked Bubbles : '{file_id}'",
-                ImageUtils.resize_util_h(
-                    final_marked, int(tuning_config.dimensions.display_height * 1.3)
-                ),
+                f"Final Marked Bubbles: '{file_id}'",
+                display_img,
                 1,
                 1,
                 config=tuning_config,
@@ -301,7 +376,8 @@ def process_files(
 
         if multi_marked == 0 or not tuning_config.outputs.filter_out_multimarked_files:
             STATS.files_not_moved += 1
-            new_file_path = save_dir.joinpath(file_id)
+            # Use original filename for output files
+            new_file_path = save_dir / file_name
             # Enter into Results sheet-
             results_line = [file_name, file_path, new_file_path, score] + resp_array
             # Write/Append to results_line file(opened in append mode)
@@ -315,7 +391,7 @@ def process_files(
         else:
             # multi_marked file
             logger.info(f"[{files_counter}] Found multi-marked file: '{file_id}'")
-            new_file_path = outputs_namespace.paths.multi_marked_dir.joinpath(file_name)
+            new_file_path = outputs_namespace.paths.multi_marked_dir / file_name
             if check_and_move(
                 constants.ERROR_CODES.MULTI_BUBBLE_WARN, file_path, new_file_path
             ):
@@ -327,44 +403,8 @@ def process_files(
                     header=False,
                     index=False,
                 )
-            # else:
-            #     TODO:  Add appropriate record handling here
-            #     pass
+        
+        file_results.append(file_result)
 
     print_stats(start_time, files_counter, tuning_config)
-
-
-def check_and_move(error_code, file_path, filepath2):
-    # TODO: fix file movement into error/multimarked/invalid etc again
-    STATS.files_not_moved += 1
-    return True
-
-
-def print_stats(start_time, files_counter, tuning_config):
-    time_checking = max(1, round(time() - start_time, 2))
-    log = logger.info
-    log("")
-    log(f"{'Total file(s) moved': <27}: {STATS.files_moved}")
-    log(f"{'Total file(s) not moved': <27}: {STATS.files_not_moved}")
-    log("--------------------------------")
-    log(
-        f"{'Total file(s) processed': <27}: {files_counter} ({'Sum Tallied!' if files_counter == (STATS.files_moved + STATS.files_not_moved) else 'Not Tallying!'})"
-    )
-
-    if tuning_config.outputs.show_image_level <= 0:
-        log(
-            f"\nFinished Checking {files_counter} file(s) in {round(time_checking, 1)} seconds i.e. ~{round(time_checking / 60, 1)} minute(s)."
-        )
-        log(
-            f"{'OMR Processing Rate': <27}: \t ~ {round(time_checking / files_counter, 2)} seconds/OMR"
-        )
-        log(
-            f"{'OMR Processing Speed': <27}: \t ~ {round((files_counter * 60) / time_checking, 2)} OMRs/minute"
-        )
-    else:
-        log(f"\n{'Total script time': <27}: {time_checking} seconds")
-
-    if tuning_config.outputs.show_image_level <= 1:
-        log(
-            "\nTip: To see some awesome visuals, open config.json and increase 'show_image_level'"
-        )
+    return file_results

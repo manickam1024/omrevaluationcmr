@@ -1,0 +1,11 @@
+STUDENT RESULTS SUMMARY
+==================================================
+
+Total Students: 1
+Passed: 0 students (0.00%)
+Failed: 1 students
+
+Passing Threshold: 50% of total marks
+
+TOP PERFORMERS:
+1. DDDDDDDDDD: 0/40 (0.00%)
